@@ -903,7 +903,7 @@ void _glfwInputMouseClick(_GLFWwindow* window, int button, int action, int mods)
  *  of the client area of the window.
  *  @ingroup event
  */
-void _glfwInputCursorMotion(_GLFWwindow* window, double x, double y);
+void _glfwInputCursorPos(_GLFWwindow* window, double x, double y);
 
 /*! @brief Notifies shared code of a cursor enter/leave event.
  *  @param[in] window The window that received the event.

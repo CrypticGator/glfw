@@ -585,12 +585,15 @@ static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg,
                 if (_glfw.cursorWindow != window)
                     break;
 
-                _glfwInputCursorMotion(window,
-                                       x - window->win32.lastCursorPosX,
-                                       y - window->win32.lastCursorPosY);
+                const int dx = x - window->win32.lastCursorPosX;
+                const int dy = y - window->win32.lastCursorPosY;
+
+                _glfwInputCursorPos(window,
+                                    window->virtualCursorPosX + dx,
+                                    window->virtualCursorPosY + dy);
             }
             else
-                _glfwInputCursorMotion(window, x, y);
+                _glfwInputCursorPos(window, x, y);
 
             window->win32.lastCursorPosX = x;
             window->win32.lastCursorPosY = y;
@@ -781,7 +784,7 @@ static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg,
 
             // Move the mouse to the position of the drop
             DragQueryPoint(drop, &pt);
-            _glfwInputCursorMotion(window, pt.x, pt.y);
+            _glfwInputCursorPos(window, pt.x, pt.y);
 
             for (i = 0;  i < count;  i++)
             {
@@ -1473,9 +1476,6 @@ void _glfwPlatformSetCursorMode(_GLFWwindow* window, int mode)
         _glfwPlatformGetCursorPos(window,
                                   &_glfw.win32.restoreCursorPosX,
                                   &_glfw.win32.restoreCursorPosY);
-        _glfwInputCursorMotion(window,
-                               _glfw.win32.restoreCursorPosX,
-                               _glfw.win32.restoreCursorPosY);
         centerCursor(window);
         updateClipRect(window);
     }

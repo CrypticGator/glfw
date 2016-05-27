@@ -100,24 +100,13 @@ void _glfwInputMouseClick(_GLFWwindow* window, int button, int action, int mods)
         window->callbacks.mouseButton((GLFWwindow*) window, button, action, mods);
 }
 
-void _glfwInputCursorMotion(_GLFWwindow* window, double x, double y)
+void _glfwInputCursorPos(_GLFWwindow* window, double x, double y)
 {
-    if (window->cursorMode == GLFW_CURSOR_DISABLED)
-    {
-        if (x == 0.0 && y == 0.0)
-            return;
+    if (window->virtualCursorPosX == x && window->virtualCursorPosY == y)
+        return;
 
-        window->virtualCursorPosX += x;
-        window->virtualCursorPosY += y;
-
-        x = window->virtualCursorPosX;
-        y = window->virtualCursorPosY;
-    }
-    else
-    {
-        window->virtualCursorPosX = x;
-        window->virtualCursorPosY = y;
-    }
+    window->virtualCursorPosX = x;
+    window->virtualCursorPosY = y;
 
     if (window->callbacks.cursorPos)
         window->callbacks.cursorPos((GLFWwindow*) window, x, y);

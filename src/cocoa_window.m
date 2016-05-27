@@ -437,16 +437,19 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 {
     if (window->cursorMode == GLFW_CURSOR_DISABLED)
     {
-        _glfwInputCursorMotion(window,
-                               [event deltaX] - window->ns.cursorWarpDeltaX,
-                               [event deltaY] - window->ns.cursorWarpDeltaY);
+        const double dx = [event deltaX] - window->ns.cursorWarpDeltaX;
+        const double dy = [event deltaY] - window->ns.cursorWarpDeltaY;
+
+        _glfwInputCursorPos(window,
+                            window->virtualCursorPosX + dx,
+                            window->virtualCursorPosY + dy);
     }
     else
     {
         const NSRect contentRect = [window->ns.view frame];
         const NSPoint pos = [event locationInWindow];
 
-        _glfwInputCursorMotion(window, pos.x, contentRect.size.height - pos.y);
+        _glfwInputCursorPos(window, pos.x, contentRect.size.height - pos.y);
     }
 
     window->ns.cursorWarpDeltaX = 0;
@@ -622,9 +625,9 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
     NSArray* files = [pasteboard propertyListForType:NSFilenamesPboardType];
 
     const NSRect contentRect = [window->ns.view frame];
-    _glfwInputCursorMotion(window,
-                           [sender draggingLocation].x,
-                           contentRect.size.height - [sender draggingLocation].y);
+    _glfwInputCursorPos(window,
+                        [sender draggingLocation].x,
+                        contentRect.size.height - [sender draggingLocation].y);
 
     const int count = [files count];
     if (count)
@@ -1445,9 +1448,6 @@ void _glfwPlatformSetCursorMode(_GLFWwindow* window, int mode)
         _glfwPlatformGetCursorPos(window,
                                   &_glfw.ns.restoreCursorPosX,
                                   &_glfw.ns.restoreCursorPosY);
-        _glfwInputCursorMotion(window,
-                               _glfw.ns.restoreCursorPosX,
-                               _glfw.ns.restoreCursorPosY);
         centerCursor(window);
         CGAssociateMouseAndMouseCursorPosition(false);
     }

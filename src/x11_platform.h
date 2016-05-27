@@ -118,7 +118,7 @@ typedef struct _GLFWwindowX11
     int             xpos, ypos;
 
     // The last received cursor position, regardless of source
-    double          lastCursorPosX, lastCursorPosY;
+    int             lastCursorPosX, lastCursorPosY;
     // The last position the cursor was warped to by GLFW
     int             warpCursorPosX, warpCursorPosY;
 

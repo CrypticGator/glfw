@@ -1167,12 +1167,15 @@ static void processEvent(XEvent *event)
                     if (_glfw.cursorWindow != window)
                         return;
 
-                    _glfwInputCursorMotion(window,
-                                           x - window->x11.lastCursorPosX,
-                                           y - window->x11.lastCursorPosY);
+                    const int dx = x - window->x11.lastCursorPosX;
+                    const int dy = y - window->x11.lastCursorPosY;
+
+                    _glfwInputCursorPos(window,
+                                        window->virtualCursorPosX + dx,
+                                        window->virtualCursorPosY + dy);
                 }
                 else
-                    _glfwInputCursorMotion(window, x, y);
+                    _glfwInputCursorPos(window, x, y);
             }
 
             window->x11.lastCursorPosX = x;
@@ -1274,7 +1277,7 @@ static void processEvent(XEvent *event)
                 int x, y;
 
                 _glfwPlatformGetWindowPos(window, &x, &y);
-                _glfwInputCursorMotion(window, absX - x, absY - y);
+                _glfwInputCursorPos(window, absX - x, absY - y);
 
                 // Reply that we are ready to copy the dragged data
                 XEvent reply;
@@ -2092,9 +2095,6 @@ void _glfwPlatformSetCursorMode(_GLFWwindow* window, int mode)
         _glfwPlatformGetCursorPos(window,
                                   &_glfw.x11.restoreCursorPosX,
                                   &_glfw.x11.restoreCursorPosY);
-        _glfwInputCursorMotion(window,
-                               _glfw.x11.restoreCursorPosX,
-                               _glfw.x11.restoreCursorPosY);
         centerCursor(window);
         XGrabPointer(_glfw.x11.display, window->x11.handle, True,
                      ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
